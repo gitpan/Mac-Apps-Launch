@@ -7,7 +7,7 @@ use Mac::Processes;
 use Mac::MoreFiles;
 use Mac::AppleEvents;
 #-----------------------------------------------------------------
-$VERSION = '1.90';
+$VERSION = '1.91';
 @ISA     = 'Exporter';
 @EXPORT  = qw(
     LaunchSpecs LaunchApps QuitApps QuitAllApps IsRunning

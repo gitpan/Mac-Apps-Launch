@@ -68,7 +68,7 @@ for my $bundle (keys %paths) { SKIP: {
 	}
 
 	SKIP: {
-		skip "$path was previously running", 1 if $wasrunning;
+		skip "$path was previously running", 2 if $wasrunning;
 		my $isrunning = 0;
 		for my $psn (keys %Process) {
 			$isrunning = 1, last if $Process{$psn}->processAppSpec =~ /\Q$path/;

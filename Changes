@@ -1,3 +1,7 @@
+* v1.91, Monday, December 6, 2004
+
+   Fix tests for when launched apps are already open.
+
 * v1.90, Tuesday, June 8, 2004
 
    Make SetFront() and IsRunning() work properly with bundle IDs and paths.
