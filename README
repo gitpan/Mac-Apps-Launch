@@ -1,0 +1,25 @@
+October 13, 1997
+
+This is Mac::Apps::Launch 1.0, a MacPerl application launcher.
+
+REQUIREMENTS:
+* Tested with MacPerl 5.1.1+ (different methods for MacPerl 5.1.4r4+).
+
+To install it, just drop the file Launch.pm in the directory
+lib:Mac:Apps.  The usage instruction are at the top of the module.
+
+This archive can always be obtained from:
+
+    http://pudge.net/macperl/
+    http://perl.com/CPAN/authors/id/CNANDOR/
+    http://perl.com/CPAN/modules/by-module/Mac/
+
+The file is a tarred, gzipped file.  Use Stuffit Expander or a
+similar program to get at the archive.
+
+I think that is about it.  Let me know how things work out, and any
+bugs, typos, suggestions, or anything else.
+
+--
+Chris Nandor                 pudge@pobox.com                 http://pudge.net/
+%PGPKey=('B76E72AD',[1024,'08 24 09 0B CE 73 CA 10  1F F7 7F 13 81 80 B6 B6'])
