@@ -7,7 +7,7 @@ use Mac::Processes;
 use Mac::MoreFiles;
 use Mac::AppleEvents;
 #-----------------------------------------------------------------
-$VERSION = '1.80';
+$VERSION = '1.81';
 @ISA     = 'Exporter';
 @EXPORT  = qw(
     LaunchSpecs LaunchApps QuitApps QuitAllApps IsRunning
@@ -204,6 +204,6 @@ terms as Perl itself.
 
 =head1 VERSION
 
-Version 1.80 (June 4, 1999)
+v1.81, Saturday, April 12, 2003
 
 =cut

@@ -1,4 +1,8 @@
-* v1.80, June 4, 1999
+* v1.81, Saturday, April 12, 2003
+
+   Use LSFindApplicationForInfo() in tests.
+
+* v1.80, Friday, April 11, 2003
 
    Cleaned up a little for Mac OS X.
 
