@@ -10,7 +10,7 @@ use Mac::Processes;
 use Mac::MoreFiles(%Application);
 use Mac::AppleEvents;
 #-----------------------------------------------------------------
-$VERSION = sprintf("%d.%02d", q$Revision: 1.30 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 1.40 $ =~ /(\d+)\.(\d+)/);
 @ISA 		= qw(Exporter);
 @EXPORT 	= qw(LaunchApps QuitApps QuitAllApps);
 #-----------------------------------------------------------------
@@ -30,7 +30,9 @@ sub QuitAllApps {
 		my $e = AEBuildAppleEvent(
 			'aevt','quit',typeApplSignature,$_,0,0,''
 		) || ($warn = 0);
-	   AESend($e, kAEWaitReply) || ($warn = 0);
+		my $r = AESend($e, kAEWaitReply) || ($warn = 0);
+		AEDisposeDesc($e) if $e;
+		AEDisposeDesc($r) if $r;
 	}
 	return $warn;
 }
@@ -42,7 +44,9 @@ sub QuitApps {
 		my $e = AEBuildAppleEvent(
 			'aevt','quit',typeApplSignature,$_,0,0,''
 		) || ($warn = 0);
-	   AESend($e, kAEWaitReply) || ($warn = 0);
+		my $r = AESend($e, kAEWaitReply) || ($warn = 0);
+		AEDisposeDesc($e) if $e;
+		AEDisposeDesc($r) if $r;
 	}
 	return $warn;
 }
@@ -50,17 +54,24 @@ sub QuitApps {
 sub LaunchApps {
 	my $warn = 1;
 	my $apps = $_[0];
-	my $switch;
+	my($switch, %open);
+
 	if ($_[1] && $_[1] == 1) {
 		$switch = eval(launchContinue+launchNoFileFlags)
 	} else {
 		$switch = eval(launchContinue+launchNoFileFlags+launchDontSwitch)
 	}
+
+	while(my($n, $i) = each(%Process)) {
+		$open{$i->processSignature()} = $i->processAppSpec();
+	}
+
 	foreach (@$apps) {
 		if ($Application{$_}) {
+			my $app_spec = exists($open{$_}) ? $open{$_} : $Application{$_};
 			my $Launch = new LaunchParam(
 				launchControlFlags => $switch,
-				launchAppSpec      => $Application{$_}
+				launchAppSpec      => $app_spec
 			);
 			LaunchApplication($Launch) || ($warn = 0);
 		} else {
@@ -81,10 +92,10 @@ Mac::Apps::Launch - MacPerl module to launch applications
 
 	use Mac::Apps::Launch;
 	my @apps = qw(R*ch Arch MPGP);
-	LaunchApps([@apps],1) || warn($^E); # launch and switch to front
-	LaunchApps([@apps])   || warn($^E); # launch and don't switch 
-	QuitApps(@apps)       || warn($^E); # quit @apps
-	QuitAllApps(@apps)    || warn($^E); # quit all except @apps
+	LaunchApps([@apps], 1) || warn($^E); # launch and switch to front
+	LaunchApps([@apps])    || warn($^E); # launch and don't switch 
+	QuitApps(@apps)        || warn($^E); # quit @apps
+	QuitAllApps(@apps)     || warn($^E); # quit all except @apps
 
 =head1 DESCRIPTION
 
@@ -102,6 +113,15 @@ Exports functions C<QuitApps()>, C<QuitAllApps()>, and C<LaunchApps()>.
 
 =over 4
 
+=item v.1.40, August 3, 1998
+
+Only launches application if not already open; e.g., won't launch newer version
+it finds if older version is open.
+
+=item v.1.31, May 18, 1998
+
+Added AEDisposeDesc() (D'oh!).  Dunno why I forgot this.
+
 =item v.1.3, January 3, 1998
 
 General cleanup, rewrite of method implementation, no longer support versions prior to 5.1.4r4, addition of Quit methods, methods return undef on failure (most recent error in C<$^E>, but could be multiple errors; oh well).
@@ -117,6 +137,6 @@ Copyright (c) 1998 Chris Nandor.  All rights reserved.  This program is free sof
 
 =head1 VERSION
 
-Version 1.30 (03 January 1998)
+Version 1.40 (03 August 1998)
 
 =cut

@@ -1,6 +1,8 @@
-Monday, January 5, 1998
+-----BEGIN PGP SIGNED MESSAGE-----
 
-This is Mac::Apps::Launch 1.3, a MacPerl application launcher.
+Monday, August 3, 1998
+
+This is Mac::Apps::Launch 1.4, a MacPerl application launcher.
 
 REQUIREMENTS:
 * MacPerl 5.1.4r4+
@@ -17,8 +19,19 @@ similar program to get at the archive.
 Please let me know how well it does(n't) work, and any changes you'd 
 like to see.
 
---
-Chris Nandor               pudge@pobox.com           http://pudge.net/
-%PGPKey=('B76E72AD',[1024,'0824 090B CE73 CA10  1FF7 7F13 8180 B6B6'])
-#==                    MacPerl: Power and Ease                     ==#
-#==    Publishing Date: Early 1998. http://www.ptf.com/macperl/    ==#
+See module POD for changes.
+
+-----BEGIN PGP SIGNATURE-----
+Version: PGPfreeware 5.0 for non-commercial use <http://www.pgp.com>
+Charset: noconv
+
+iQCVAwUBNcWwXyhcZja3bnKtAQGVBAQAjZUW/3JgpYCy8LgSLLth7IzHvPilc2zP
+w8U2S8Cv31/2EkzH+3aXOZlQqn88O5hcalWCasUpfbV33bH9Fc8HPiTML5ugcgbq
+S2ZqIVpiRT5ZmU5oBSpRZ2KH4FUzFiQN8/xQp/7IqC6RoEjsuR0R4GV4oth/44Yj
+JDJhCafQ/HM=
+=LKFC
+-----END PGP SIGNATURE-----
+
+-- 
+Chris Nandor          mailto:pudge@pobox.com         http://pudge.net/
+%PGPKey = ('B76E72AD', [1024, '0824090B CE73CA10  1FF77F13 8180B6B6'])
