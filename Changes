@@ -1,3 +1,7 @@
+* v1.90, Tuesday, June 8, 2004
+
+   Make SetFront() and IsRunning() work properly with bundle IDs and paths.
+
 * v1.81, Saturday, April 12, 2003
 
    Use LSFindApplicationForInfo() in tests.

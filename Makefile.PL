@@ -10,4 +10,5 @@ WriteMakefile(
 	'clean'	=> {
 		'FILES'	=> 'Mac-Apps-Launch-*'
 	},
+	'NO_META'		=> 1,
 );

@@ -3,7 +3,7 @@ use Test::More;
 use strict;
 
 BEGIN {
-	plan tests => 17;
+	plan tests => 23;
 	use_ok('Mac::Apps::Launch');
 }
 
@@ -20,10 +20,11 @@ SKIP: {
 }
 
 my $target = 'MACS';
-my @paths  = map { LSFindApplicationForInfo("", $_) } qw(
+my @bundles = qw(
 	com.apple.calculator
 	com.apple.TextEdit
 );
+my %paths  = map { ($_ => LSFindApplicationForInfo("", $_)) } @bundles;
 
 TODO: {
 	local $TODO = "no Mac::Apps::Launch Hide/Show on Mac OS X" if $^O eq 'darwin';
@@ -41,15 +42,18 @@ SKIP: {
 
 }
 
-for my $path (@paths) { SKIP: {
+for my $bundle (keys %paths) { SKIP: {
+	my $path = $paths{$bundle};
 	skip "Mac::Apps::Launch", 4 unless -e $path;
 
 	my $wasrunning = 0;
 	for my $psn (keys %Process) {
 		$wasrunning = 1, last if $Process{$psn}->processAppSpec =~ /\Q$path/;
 	}
+	is((IsRunning($bundle) ? 1 : 0), $wasrunning, 'IsRunning');
 
 	ok(LaunchSpecs($path, 1),  'LaunchSpecs');
+	ok(IsRunning($bundle), 'IsRunning');
 	sleep 3;
 	for my $psn (keys %Process) {
 		if ($Process{$psn}->processAppSpec =~ /\Q$path/) {
@@ -70,6 +74,7 @@ for my $path (@paths) { SKIP: {
 			$isrunning = 1, last if $Process{$psn}->processAppSpec =~ /\Q$path/;
 		}
 		ok(!$isrunning, "Don't find $path");
+		ok(!IsRunning($bundle), 'IsRunning');
 	}
 } }
 

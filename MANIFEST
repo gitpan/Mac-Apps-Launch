@@ -6,3 +6,4 @@ MANIFEST
 Makefile.PL
 README
 t/launch.t
+t/pod.t

@@ -7,7 +7,7 @@ use Mac::Processes;
 use Mac::MoreFiles;
 use Mac::AppleEvents;
 #-----------------------------------------------------------------
-$VERSION = '1.81';
+$VERSION = '1.90';
 @ISA     = 'Exporter';
 @EXPORT  = qw(
     LaunchSpecs LaunchApps QuitApps QuitAllApps IsRunning
@@ -49,12 +49,13 @@ sub Show { _showhide('true', @_) }
 sub Hide { _showhide('fals', @_) }
 #-----------------------------------------------------------------
 sub SetFront {
-	my($app) = @_;
+	my($address, $is_path) = _get_address(@_);
 	for my $psn (keys %Process) {
-		if ($Process{$psn}->processSignature eq $app) {
-			SetFrontProcess($psn);
-			return 1;
-		}
+		next unless $is_path
+			? $Process{$psn}->processAppSpec =~ /^\Q$address\E/
+			: $Process{$psn}->processSignature eq $address;
+		SetFrontProcess($psn);
+		return 1;
 	}
 	return;
 }
@@ -110,7 +111,8 @@ sub LaunchApps {
 		$switch = launchContinue | launchNoFileFlags | launchDontSwitch;
 	}
 
-	while(my($n, $i) = each(%Process)) {
+	for my $n (keys %Process) {
+		my $i = $Process{$n};
 		$open{$i->processSignature} = $i->processAppSpec;
 	}
 
@@ -141,14 +143,32 @@ sub _launch {
 }
 #-----------------------------------------------------------------
 sub IsRunning {
-	my %x;
-	while (my($k, $v) = each %Process) {
-		goto &IsRunning if !ref $v;  # hopefully we don't go into a neverending loop here
-		$x{$v->processSignature} = 1;
+	my($address, $is_path) = _get_address(@_);
+	for my $psn (keys %Process) {
+		return 1 if $is_path
+			? $Process{$psn}->processAppSpec =~ /^\Q$address\E/
+			: $Process{$psn}->processSignature eq $address;
 	}
-	return exists $x{$_[0]};
+	return;
 }
 #-----------------------------------------------------------------
+sub _get_address {
+	my($address, $is_path) = @_;
+	unless ($is_path) {
+		if (length($address) == 4) {
+			$is_path = 0;
+		} elsif ($address =~ /^(?:\w+\.)+\w+$/) {
+			# try to assume is bundle ID
+			my $path = LSFindApplicationForInfo('', $address);
+			$address = $path if $path;
+			$is_path = 1;
+		} else { # fall back to path ...
+			$is_path = 1;
+		}
+	}
+
+	return($address, $is_path);
+}
 
 1;
 
@@ -189,6 +209,13 @@ C<Hide> and C<Show> do not currently work on Mac OS X.
 Apps that don't have signatures under Mac OS X currently aren't handled,
 except with LaunchSpecs().
 
+C<SetFront> and C<IsRunning> can take a four-char creator ID ('MACS'), a
+bundle ID ('com.apple.Finder'), or a path
+(F</System/Library/CoreServices/Finder.app>).  They both optionally take
+a second parameter which affirms that the data is indeed a path (for
+those rare cases where a path might possibly look like a creator ID
+or bundle ID ... you never know).
+
 =head1 EXPORT
 
 Exports functions C<QuitApps>, C<QuitAllApps>, and C<LaunchApps>,
@@ -198,12 +225,8 @@ C<IsRunning>, C<LaunchSpecs>, C<SetFront>, C<Hide>, C<Show>.
 
 Chris Nandor E<lt>pudge@pobox.comE<gt>, http://pudge.net/
 
-Copyright (c) 1999-2003 Chris Nandor.  All rights reserved.  This program
+Copyright (c) 1999-2004 Chris Nandor.  All rights reserved.  This program
 is free software; you can redistribute it and/or modify it under the same
 terms as Perl itself.
-
-=head1 VERSION
-
-v1.81, Saturday, April 12, 2003
 
 =cut
