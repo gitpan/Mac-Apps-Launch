@@ -1,11 +1,6 @@
 -----BEGIN PGP SIGNED MESSAGE-----
 
-Monday, August 3, 1998
-
-This is Mac::Apps::Launch 1.4, a MacPerl application launcher.
-
-REQUIREMENTS:
-* MacPerl 5.1.4r4+
+Wednesday, September 16, 1998
 
 This archive can always be obtained from:
 
@@ -19,19 +14,72 @@ similar program to get at the archive.
 Please let me know how well it does(n't) work, and any changes you'd 
 like to see.
 
-See module POD for changes.
+#============================================================================
+
+NAME
+    Mac::Apps::Launch - MacPerl module to launch applications
+
+SYNOPSIS
+        use Mac::Apps::Launch;
+        my @apps = qw(R*ch Arch MPGP);
+        LaunchApps([@apps], 1) || warn($^E); # launch and switch to front
+        LaunchApps([@apps])    || warn($^E); # launch and don't switch 
+        QuitApps(@apps)        || warn($^E); # quit @apps
+        QuitAllApps(@apps)     || warn($^E); # quit all except @apps
+        IsRunning('MACS');                   # returns boolean for whether
+                                             # given app ID is running
+
+DESCRIPTION
+    Simply launch or quit applications by their creator ID. The Finder can
+    be quit in this way, though it cannot be launched in this way.
+
+    This module is used by several other modules.
+
+    This module as written does not work with MacPerls prior to 5.1.4r4.
+
+EXPORT
+    Exports functions `QuitApps()', `QuitAllApps()', and `LaunchApps()'.
+
+HISTORY
+    v.1.50, September 16, 1998
+        Added `IsRunning()'.
+
+    v.1.40, August 3, 1998
+        Only launches application if not already open; e.g., won't launch
+        newer version it finds if older version is open.
+
+    v.1.31, May 18, 1998
+        Added AEDisposeDesc() (D'oh!). Dunno why I forgot this.
+
+    v.1.3, January 3, 1998
+        General cleanup, rewrite of method implementation, no longer
+        support versions prior to 5.1.4r4, addition of Quit methods,
+        methods return undef on failure (most recent error in `$^E', but
+        could be multiple errors; oh well).
+
+AUTHOR
+    Chris Nandor <pudge@pobox.com> http://pudge.net/
+
+    Copyright (c) 1998 Chris Nandor. All rights reserved. This program is
+    free software; you can redistribute it and/or modify it under the same
+    terms as Perl itself. Please see the Perl Artistic License.
+
+VERSION
+    Version 1.50 (16 September 1998)
+
+#============================================================================
+
+- -- 
+Chris Nandor          mailto:pudge@pobox.com         http://pudge.net/
+%PGPKey = ('B76E72AD', [1024, '0824090B CE73CA10  1FF77F13 8180B6B6'])
 
 -----BEGIN PGP SIGNATURE-----
 Version: PGPfreeware 5.0 for non-commercial use <http://www.pgp.com>
 Charset: noconv
 
-iQCVAwUBNcWwXyhcZja3bnKtAQGVBAQAjZUW/3JgpYCy8LgSLLth7IzHvPilc2zP
-w8U2S8Cv31/2EkzH+3aXOZlQqn88O5hcalWCasUpfbV33bH9Fc8HPiTML5ugcgbq
-S2ZqIVpiRT5ZmU5oBSpRZ2KH4FUzFiQN8/xQp/7IqC6RoEjsuR0R4GV4oth/44Yj
-JDJhCafQ/HM=
-=LKFC
+iQCVAwUBNgBjAyhcZja3bnKtAQFbzwP+IG8qKvJG3u8SW60NqtwwI2E+aQwj9WDo
+HrJR09OXpDT3BkGNtzi8Mv8UiD+ILun9MQvxcOjsQkUpiiuMDgA38PbJU53O0ObU
+wC3M+xQNccEIYyo1GEt4vjAM1eHHfvsxNsENiY1/uyC6A4GEHPdI05ZAZyyDFC3H
+BaI8n/57Zzg=
+=kp05
 -----END PGP SIGNATURE-----
-
--- 
-Chris Nandor          mailto:pudge@pobox.com         http://pudge.net/
-%PGPKey = ('B76E72AD', [1024, '0824090B CE73CA10  1FF77F13 8180B6B6'])

@@ -4,5 +4,5 @@ use ExtUtils::MakeMaker;
 # the contents of the Makefile that is written.
 WriteMakefile(
     'NAME'	=> 'Mac::Apps::Launch',
-    'VERSION_FROM' => 'lib/Mac/Apps/Launch.pm', # finds $VERSION
+    'VERSION_FROM' => 'Launch.pm', # finds $VERSION
 );
