@@ -9,9 +9,9 @@ use Mac::Processes;
 use Mac::MoreFiles(%Application);
 use Mac::AppleEvents;
 #-----------------------------------------------------------------
-$VERSION = '1.50';
+$VERSION = '1.60';
 @ISA     = qw(Exporter);
-@EXPORT  = qw(LaunchApps QuitApps QuitAllApps IsRunning);
+@EXPORT  = qw(LaunchSpecs LaunchApps QuitApps QuitAllApps IsRunning);
 #-----------------------------------------------------------------
 sub QuitAllApps {
     my $warn = 1;
@@ -52,9 +52,10 @@ sub QuitApps {
 #-----------------------------------------------------------------
 sub LaunchApps {
     my $warn = 1;
-    my $apps = $_[0];
-    my($switch, %open);
+    my @apps = ref($_[0]) eq 'ARRAY' ? @{$_[0]} : $_[0];
+    my($switch, $specs, %open);
 
+    $specs = 1 if (caller(1))[3] && (caller(1))[3] eq __PACKAGE__ . "::LaunchSpecs";
     if ($_[1] && $_[1] == 1) {
         $switch = eval(launchContinue+launchNoFileFlags)
     } else {
@@ -65,14 +66,12 @@ sub LaunchApps {
         $open{$i->processSignature()} = $i->processAppSpec();
     }
 
-    foreach (@$apps) {
-        if ($Application{$_}) {
+    foreach (@apps) {
+        if ($specs) {
+            _launch($_, $switch) || ($warn = 0);
+        } elsif ($Application{$_}) {
             my $app_spec = exists($open{$_}) ? $open{$_} : $Application{$_};
-            my $Launch = new LaunchParam(
-                launchControlFlags => $switch,
-                launchAppSpec      => $app_spec
-            );
-            LaunchApplication($Launch) || ($warn = 0);
+            _launch($app_spec, $switch) || ($warn = 0);
         } else {
             $warn = 0;
         }
@@ -80,10 +79,23 @@ sub LaunchApps {
     return $warn;
 }
 #-----------------------------------------------------------------
+sub LaunchSpecs {LaunchApps(@_)}
+#-----------------------------------------------------------------
+sub _launch {
+    my($app_spec, $switch) = @_;
+    return unless -e $app_spec;
+    my $Launch = new LaunchParam(
+        launchControlFlags => $switch,
+        launchAppSpec      => $app_spec
+    );
+    LaunchApplication($Launch);
+}
+#-----------------------------------------------------------------
 sub IsRunning {
     my %x;
-    foreach (keys %Process) {
-        $x{$Process{$_}->processSignature} = 1
+    while (my($k, $v) = each %Process) {
+        goto &IsRunning if !ref($v);  # hoepfully we don't go into a neverending loop here
+        $x{$v->processSignature} = 1
     }
     return exists $x{shift()};
 }
@@ -100,8 +112,11 @@ Mac::Apps::Launch - MacPerl module to launch applications
 
     use Mac::Apps::Launch;
     my @apps = qw(R*ch Arch MPGP);
+    my $path = "HD:System Folder:Finder";
     LaunchApps([@apps], 1) || warn($^E); # launch and switch to front
     LaunchApps([@apps])    || warn($^E); # launch and don't switch 
+    LaunchApps($app[1], 1) || warn($^E); # launch and switch to front
+    LaunchSpecs($path, 1)  || warn($^E); # use path instead of app ID
     QuitApps(@apps)        || warn($^E); # quit @apps
     QuitAllApps(@apps)     || warn($^E); # quit all except @apps
     IsRunning('MACS');                   # returns boolean for whether
@@ -117,15 +132,22 @@ This module as written does not work with MacPerls prior to 5.1.4r4.
 
 =head1 EXPORT
 
-Exports functions C<QuitApps()>, C<QuitAllApps()>, and C<LaunchApps()>.
+Exports functions C<QuitApps>, C<QuitAllApps>, and C<LaunchApps>,
+C<IsRunning>, C<LaunchSpecs>.
 
 =head1 HISTORY
 
 =over 4
 
+=item v.1.60, September 28, 1998
+
+Added C<LaunchSpecs>.  Use this when the app does not have a unique app ID,
+the app is not really an app (like the Finder), or you have more than one
+instance of the app, and want to launch a particular one.
+
 =item v.1.50, September 16, 1998
 
-Added C<IsRunning()>.
+Added C<IsRunning>.
 
 =item v.1.40, August 3, 1998
 
@@ -134,7 +156,7 @@ it finds if older version is open.
 
 =item v.1.31, May 18, 1998
 
-Added AEDisposeDesc() (D'oh!).  Dunno why I forgot this.
+Added C<AEDisposeDesc> call (D'oh!).  Dunno why I forgot this.
 
 =item v.1.3, January 3, 1998
 
@@ -151,6 +173,6 @@ Copyright (c) 1998 Chris Nandor.  All rights reserved.  This program is free sof
 
 =head1 VERSION
 
-Version 1.50 (16 September 1998)
+Version 1.60 (28 September 1998)
 
 =cut

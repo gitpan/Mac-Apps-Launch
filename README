@@ -1,6 +1,6 @@
 -----BEGIN PGP SIGNED MESSAGE-----
 
-Wednesday, September 16, 1998
+Monday, September 28, 1998
 
 This archive can always be obtained from:
 
@@ -22,8 +22,11 @@ NAME
 SYNOPSIS
         use Mac::Apps::Launch;
         my @apps = qw(R*ch Arch MPGP);
+        my $path = "HD:System Folder:Finder";
         LaunchApps([@apps], 1) || warn($^E); # launch and switch to front
         LaunchApps([@apps])    || warn($^E); # launch and don't switch 
+        LaunchApps($app[1], 1) || warn($^E); # launch and switch to front
+        LaunchSpecs($path, 1)  || warn($^E); # use path instead of app ID
         QuitApps(@apps)        || warn($^E); # quit @apps
         QuitAllApps(@apps)     || warn($^E); # quit all except @apps
         IsRunning('MACS');                   # returns boolean for whether
@@ -38,18 +41,25 @@ DESCRIPTION
     This module as written does not work with MacPerls prior to 5.1.4r4.
 
 EXPORT
-    Exports functions `QuitApps()', `QuitAllApps()', and `LaunchApps()'.
+    Exports functions `QuitApps', `QuitAllApps', and `LaunchApps',
+    `IsRunning', `LaunchSpecs'.
 
 HISTORY
+    v.1.60, September 28, 1998
+        Added `LaunchSpecs'. Use this when the app does not have a unique
+        app ID, the app is not really an app (like the Finder), or you
+        have more than one instance of the app, and want to launch a
+        particular one.
+
     v.1.50, September 16, 1998
-        Added `IsRunning()'.
+        Added `IsRunning'.
 
     v.1.40, August 3, 1998
         Only launches application if not already open; e.g., won't launch
         newer version it finds if older version is open.
 
     v.1.31, May 18, 1998
-        Added AEDisposeDesc() (D'oh!). Dunno why I forgot this.
+        Added `AEDisposeDesc' call (D'oh!). Dunno why I forgot this.
 
     v.1.3, January 3, 1998
         General cleanup, rewrite of method implementation, no longer
@@ -65,7 +75,7 @@ AUTHOR
     terms as Perl itself. Please see the Perl Artistic License.
 
 VERSION
-    Version 1.50 (16 September 1998)
+    Version 1.60 (28 September 1998)
 
 #============================================================================
 
@@ -77,9 +87,9 @@ Chris Nandor          mailto:pudge@pobox.com         http://pudge.net/
 Version: PGPfreeware 5.0 for non-commercial use <http://www.pgp.com>
 Charset: noconv
 
-iQCVAwUBNgBjAyhcZja3bnKtAQFbzwP+IG8qKvJG3u8SW60NqtwwI2E+aQwj9WDo
-HrJR09OXpDT3BkGNtzi8Mv8UiD+ILun9MQvxcOjsQkUpiiuMDgA38PbJU53O0ObU
-wC3M+xQNccEIYyo1GEt4vjAM1eHHfvsxNsENiY1/uyC6A4GEHPdI05ZAZyyDFC3H
-BaI8n/57Zzg=
-=kp05
+iQCVAwUBNg/8LShcZja3bnKtAQFSZQP5ATE4Re/HKErJekjBKYPmn9kk0iFi/6Xq
+E9ih7Qgi66C42OkE+zmSfJ6T3F4joD+bT3iJM5cxd8G9bgTbHligisuYW6oHMxwI
+qoVr0IZZYIsIxxMyN29HvnUnGOnXbtRvSHb4XBakO066kbj7bU3citeG1mGoeGL8
+Uzggq6i/hLY=
+=1L2Z
 -----END PGP SIGNATURE-----
