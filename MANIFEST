@@ -1,5 +1,8 @@
+.cvsignore
+.releaserc
+Changes
 Launch.pm
-Makefile.PL
 MANIFEST
+Makefile.PL
 README
-test.pl
+t/launch.t
