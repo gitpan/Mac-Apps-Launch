@@ -7,7 +7,7 @@
 # Change 1..1 below to 1..last_test_to_print .
 # (It may become useful if the test is moved to ./t subdirectory.)
 
-BEGIN { $| = 1; print "1..2\n"; }
+BEGIN { $| = 1; print "1..6\n"; }
 END {print "not ok 1\n" unless $loaded;}
 use Mac::Apps::Launch;
 $loaded = 1;
@@ -28,3 +28,8 @@ if (
 } else {
 	print "not ok 2: upgrade MacPerl to 5.1.4r4 or better\n";
 }
+
+printf "%sok 3\n", SetFront('MACS') ? '' : 'not';
+printf "%sok 4\n", Hide('McPL') ? '' : 'not';
+printf "%sok 5\n", Show('McPL') ? '' : 'not';
+printf "%sok 6\n", SetFront('McPL') ? '' : 'not';
