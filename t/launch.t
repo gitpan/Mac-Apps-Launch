@@ -3,7 +3,7 @@ use Test::More;
 use strict;
 
 BEGIN {
-	plan tests => 23;
+	plan tests => 21;
 	use_ok('Mac::Apps::Launch');
 }
 
@@ -44,7 +44,7 @@ SKIP: {
 
 for my $bundle (keys %paths) { SKIP: {
 	my $path = $paths{$bundle};
-	skip "Mac::Apps::Launch", 4 unless -e $path;
+	skip "Mac::Apps::Launch", 3 unless -e $path;
 
 	my $wasrunning = 0;
 	for my $psn (keys %Process) {
@@ -53,18 +53,12 @@ for my $bundle (keys %paths) { SKIP: {
 	is((IsRunning($bundle) ? 1 : 0), $wasrunning, 'IsRunning');
 
 	ok(LaunchSpecs($path, 1),  'LaunchSpecs');
-	ok(IsRunning($bundle), 'IsRunning');
+	ok((my $psn = IsRunning($bundle)), 'IsRunning');
 	sleep 3;
-	for my $psn (keys %Process) {
-		if ($Process{$psn}->processAppSpec =~ /\Q$path/) {
-			ok(1, "Find $path");
-			SKIP: {
-				skip "$path was previously running", 1 if $wasrunning;
-				ok(kill(SIGTERM, GetProcessPID($psn)), "Kill $path");
-				sleep 3;
-			}
-			last;
-		}
+	SKIP: {
+		skip "$path was previously running", 1 if $wasrunning;
+		ok(kill(SIGTERM, GetProcessPID($psn)), "Kill $path");
+		sleep 3;
 	}
 
 	SKIP: {

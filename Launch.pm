@@ -7,7 +7,7 @@ use Mac::Processes;
 use Mac::MoreFiles;
 use Mac::AppleEvents;
 #-----------------------------------------------------------------
-$VERSION = '1.91';
+$VERSION = '1.92';
 @ISA     = 'Exporter';
 @EXPORT  = qw(
     LaunchSpecs LaunchApps QuitApps QuitAllApps IsRunning
@@ -51,6 +51,10 @@ sub Hide { _showhide('fals', @_) }
 sub SetFront {
 	my($address, $is_path) = _get_address(@_);
 	for my $psn (keys %Process) {
+		unless ($Process{$psn}) {
+#			warn "$address:$is_path:$psn";
+			next;
+		}
 		next unless $is_path
 			? $Process{$psn}->processAppSpec =~ /^\Q$address\E/
 			: $Process{$psn}->processSignature eq $address;
@@ -69,6 +73,7 @@ sub QuitAllApps {
 	my @apps;
 	for my $psn (keys %Process) {
 		my $proc = $Process{$psn};
+		next unless $proc;
 		my $sig = $proc->processSignature;
 		next if $sig =~ /$keepapps/; # apps to keep running
 		push @apps, $sig if $proc->processType == $APPL;
@@ -113,6 +118,7 @@ sub LaunchApps {
 
 	for my $n (keys %Process) {
 		my $i = $Process{$n};
+		next unless $i;
 		$open{$i->processSignature} = $i->processAppSpec;
 	}
 
@@ -145,7 +151,11 @@ sub _launch {
 sub IsRunning {
 	my($address, $is_path) = _get_address(@_);
 	for my $psn (keys %Process) {
-		return 1 if $is_path
+		unless ($Process{$psn}) {
+#			warn "$address:$is_path:$psn";
+			next;
+		}
+		return $psn if $is_path
 			? $Process{$psn}->processAppSpec =~ /^\Q$address\E/
 			: $Process{$psn}->processSignature eq $address;
 	}
@@ -216,6 +226,10 @@ a second parameter which affirms that the data is indeed a path (for
 those rare cases where a path might possibly look like a creator ID
 or bundle ID ... you never know).
 
+C<IsRunning> will return the PSN of the application if it is running,
+which you can then use for targetting the app, or converting to a PID
+(with C<Mac::Processes::GetProcessPID()>), to send signals to it.
+
 =head1 EXPORT
 
 Exports functions C<QuitApps>, C<QuitAllApps>, and C<LaunchApps>,
@@ -225,7 +239,7 @@ C<IsRunning>, C<LaunchSpecs>, C<SetFront>, C<Hide>, C<Show>.
 
 Chris Nandor E<lt>pudge@pobox.comE<gt>, http://pudge.net/
 
-Copyright (c) 1999-2004 Chris Nandor.  All rights reserved.  This program
+Copyright (c) 1999-2005 Chris Nandor.  All rights reserved.  This program
 is free software; you can redistribute it and/or modify it under the same
 terms as Perl itself.
 

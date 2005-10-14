@@ -1,3 +1,10 @@
+* v1.92, Friday, October 14, 2005
+
+   IsRunning() now returns PSN, which can be useful.
+
+   Various functions check to make sure $Process{$psn} returns a valid
+   value before trying to use it, which was causing some errors.
+
 * v1.91, Monday, December 6, 2004
 
    Fix tests for when launched apps are already open.
