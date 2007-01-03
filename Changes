@@ -1,3 +1,7 @@
+* v1.93, Wednesday, January 3, 2007
+
+   Bundle IDs can have non-alpha chars.
+
 * v1.92, Friday, October 14, 2005
 
    IsRunning() now returns PSN, which can be useful.

@@ -57,7 +57,8 @@ for my $bundle (keys %paths) { SKIP: {
 	sleep 3;
 	SKIP: {
 		skip "$path was previously running", 1 if $wasrunning;
-		ok(kill(SIGTERM, GetProcessPID($psn)), "Kill $path");
+		my $pid = GetProcessPID($psn);
+		ok($pid && kill(SIGTERM, $pid), "Kill $path");
 		sleep 3;
 	}
 

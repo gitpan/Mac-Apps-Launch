@@ -7,7 +7,7 @@ use Mac::Processes;
 use Mac::MoreFiles;
 use Mac::AppleEvents;
 #-----------------------------------------------------------------
-$VERSION = '1.92';
+$VERSION = '1.93';
 @ISA     = 'Exporter';
 @EXPORT  = qw(
     LaunchSpecs LaunchApps QuitApps QuitAllApps IsRunning
@@ -167,7 +167,7 @@ sub _get_address {
 	unless ($is_path) {
 		if (length($address) == 4) {
 			$is_path = 0;
-		} elsif ($address =~ /^(?:\w+\.)+\w+$/) {
+		} elsif ($address =~ /^(?:\S+\.)+\S+$/) {
 			# try to assume is bundle ID
 			my $path = LSFindApplicationForInfo('', $address);
 			$address = $path if $path;
